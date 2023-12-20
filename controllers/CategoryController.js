@@ -13,7 +13,7 @@ cloudinary.config({
 class CategoryController {
   static categoryinsert = async (req, res) => {
     try {
-      const { cname, image } = req.body;
+      const { cname, imagen } = req.body;
       const file = req.files.image;
       const image_upload = await cloudinary.uploader.upload(file.tempFilePath, {
         folder: "categoryimageApi",
