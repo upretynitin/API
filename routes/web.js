@@ -20,8 +20,8 @@ router.get('/categorydelete',CategoryController.categorydelete)
 //product controller
 router.get('/getallproduct',ProductController.getallproduct)
 router.post('/createproduct',ProductController.createproduct)
-router.get('/getallproductdetail',ProductController.getallproductdetail)
-router.post('/updateproduct',ProductController.updateproduct)
+router.get('/getallproductdetail/:id',ProductController.getallproductdetail)
+router.post('/updateproduct/:id',ProductController.updateproduct)
 router.get('/deleteproduct',ProductController.deleteproduct)
 
 

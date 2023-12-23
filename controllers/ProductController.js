@@ -52,19 +52,21 @@ class ProductController{
             console.log(error);
         }
     }
-    static getallproductdetail = async(req,res)=>{
-        try{
-            //    console.log(req.params.id);
-        const product = await ProductModel.findById(req.params.id)
-        res.status(201).json({
-            status: 'success',
-            message: 'successfull',
-            product,
-          })
-        }catch(error){
+
+    static getallproductdetail = async (req, res) => {
+        try {
+               console.log(req.params.id);
+            const product = await ProductModel.findById(req.params.id)
+            res.status(201).json({
+                status: 'success',
+                message: 'successfull',
+                product,
+            })
+        } catch (error) {
             console.log(error);
         }
     }
+
     static updateproduct = async(req,res)=>{
         try{
             // console.log(req.params.id);
@@ -81,10 +83,10 @@ class ProductController{
                     folder:'productimageApi'
                 })
                 var data={
-                name:name,
-                description:description,
-                price:price,
-                category:category,
+                name:req.body.name,
+                description:req.body.description,
+                price:req.body.price,
+                category:req.body.category,
                 image:{
                     public_id:image_upload.public_id,
                     url:image_upload.secure_url
@@ -95,10 +97,10 @@ class ProductController{
 
             }else{
                 var data ={
-                        name:name,
-                        description:description,
-                        price:price,
-                        category:category
+                        name:req.body.name,
+                        description:req.body.description,
+                        price:req.body.price,
+                        category:req.body.category
                 }
             }
             const update = await ProductModel.findByIdAndUpdate(req.params.id, data)
