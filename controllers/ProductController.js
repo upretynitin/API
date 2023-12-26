@@ -55,7 +55,7 @@ class ProductController{
 
     static getallproductdetail = async (req, res) => {
         try {
-               console.log(req.params.id);
+            //    console.log(req.params.id);
             const product = await ProductModel.findById(req.params.id)
             res.status(201).json({
                 status: 'success',

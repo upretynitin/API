@@ -2,12 +2,13 @@ const express = require('express')
 const UserController = require('../controllers/UserController')
 const CategoryController = require('../controllers/CategoryController')
 const ProductController = require('../controllers/ProductController')
+const checkauth = require('../middleware/auth')
 const router = express.Router()
 
 //usercontroller
 router.get('/getalluser',UserController.getalluser)
 router.post('/userinsert',UserController.userinsert)
-router.get('/getuserdetails',UserController.getuserdetails)
+router.get('/me', checkauth, UserController.getuserdetails)
 router.post('/verifylogin',UserController.verifylogin)
 
 //categorycontroller
