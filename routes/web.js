@@ -10,6 +10,7 @@ router.get('/getalluser',UserController.getalluser)
 router.post('/userinsert',UserController.userinsert)
 router.get('/me', checkauth, UserController.getuserdetails)
 router.post('/verifylogin',UserController.verifylogin)
+router.get('/logout', UserController.logout)
 
 //categorycontroller
 router.post('/categoryinsert',CategoryController.categoryinsert)
