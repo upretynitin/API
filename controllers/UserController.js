@@ -127,34 +127,37 @@ class UserController {
   }
   static updateprofile = async (req, res) => {
     try {
-      // console.log(req.files.avatar)
-      // console.log(req.body)
-      // const { id } = req.data1
+      // console.log(req.files.image);
+      const {name, email ,id} = req.data1
       if (req.files) {
-        // update the profile of user
         const user = await UserModel.findById(req.data1.id)
-        const image_id = user.image.public_id
-        // console.log(image_id)
-        await cloudinary.uploader.destroy(image_id)
-        const mycloud = await cloudinary.uploader.upload(file.tempFilePath, {
-          folder: 'profileimageapi',
-          width: 150,
-          crop: 'scale',
+        const imageid = user.image.public_id
+        // console.log(imageid)
+        await cloudinary.uploader.destroy(imageid)
+        const file = req.files.image
+        // image upload code
+        const image_upload = await cloudinary.uploader.upload(file.tempFilePath, {
+          folder: 'profile Image',
         })
 
         var data = {
           name: req.body.name,
           email: req.body.email,
-
+          phone: req.body.phone,
+          city: req.body.city,
+          adress: req.body.address,
           image: {
-            public_id: mycloud.public_id,
-            url: mycloud.secure_url,
-          },
+            public_id: image_upload.public_id,
+            url: image_upload.secure_url,
+          }
         }
       } else {
         var data = {
           name: req.body.name,
           email: req.body.email,
+          phone: req.body.phone,
+          city: req.body.city,
+          adress: req.body.address,
         }
       }
 
@@ -170,26 +173,31 @@ class UserController {
       console.log(err)
     }
   }
+  
   static updatepassword = async (req, res) => {
     try {
-        // const { id } = req.data1
-        const { old_password, new_password, confirmpassword } = req.body;
-        if (old_password && new_password && confirmpassword) {
+        // consolo.log(req.body)
+        const { name, email, id } = req.data1
+        const { oldpassword, newpassword, cpassword } = req.body;
+        if (oldpassword && newpassword && cpassword) {
             const user = await UserModel.findById(req.data1.id);
-            const ismatch = await bcrypt.compare(old_password, user.password);
-            if (!ismatch) {
+            // console.log(user)
+
+            // for password compareing
+            const ismatched = await bcrypt.compare(oldpassword, user.password);
+            if (!ismatched) {
                 res
                     .status(401)
                     .json({ status: "failed", message: "old password is incorrect" });
             } else {
-                if (new_password !== confirmpassword) {
+                if (newpassword != cpassword) {
                     res
                         .status(401)
                         .json({ status: "failed", message: "  Password and confirm password do not match" });
 
                 } else {
-                    const newHashpassword = await bcrypt.hash(new_password, 10);
-                    await UserModel.findByIdAndUpdate(req.data1.id, {
+                    const newHashpassword = await bcrypt.hash(newpassword, 10);
+                    const r = await UserModel.findByIdAndUpdate(req.data1.id, {
                         $set: { password: newHashpassword },
                     });
                     res.status(201).json({
