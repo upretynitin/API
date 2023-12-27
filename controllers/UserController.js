@@ -130,7 +130,7 @@ class UserController {
   static updateprofile = async (req, res) => {
     try {
       // console.log(req.files.image);
-      const { name, email, id } = req.data1;
+      // const { name, email, id } = req.data1;
       if (req.files) {
         const user = await UserModel.findById(req.data1.id);
         const imageid = user.image.public_id;
@@ -148,9 +148,6 @@ class UserController {
         var data = {
           name: req.body.name,
           email: req.body.email,
-          phone: req.body.phone,
-          city: req.body.city,
-          adress: req.body.address,
           image: {
             public_id: image_upload.public_id,
             url: image_upload.secure_url,
@@ -160,14 +157,11 @@ class UserController {
         var data = {
           name: req.body.name,
           email: req.body.email,
-          phone: req.body.phone,
-          city: req.body.city,
-          adress: req.body.address,
         };
       }
 
       // update code
-      const result = await UserModel.findByIdAndUpdate(req.params.id, data);
+      const result = await UserModel.findByIdAndUpdate(req.data1.id, data);
 
       res.status(200).json({
         success: true,
