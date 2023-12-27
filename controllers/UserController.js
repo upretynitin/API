@@ -180,7 +180,7 @@ class UserController {
         const { name, email, id } = req.data1
         const { oldpassword, newpassword, cpassword } = req.body
         if (oldpassword && newpassword && cpassword) {
-            const user = await StudentModel.findById(id)
+            const user = await StudentModel.findById(req.data1.id)
             // console.log(user)
 
             // for password compareing
@@ -194,7 +194,7 @@ class UserController {
                     res.redirect('/changepassword')
                 } else {
                     const newhashpassword = await bcrypt.hash(newpassword, 10)
-                    const r = await StudentModel.findByIdAndUpdate(id, {
+                    const r = await StudentModel.findByIdAndUpdate(req.data1.id, {
                         password: newhashpassword,
                     })
                     req.flash('success', 'Password update sucessfully')
