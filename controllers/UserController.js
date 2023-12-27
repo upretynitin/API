@@ -125,6 +125,91 @@ class UserController {
         console.log(err);
     }
   }
+  static updateprofile = async (req, res) => {
+    try {
+      // console.log(req.files.avatar)
+      // console.log(req.body)
+      // const { id } = req.data1
+      if (req.files) {
+        // update the profile of user
+        const user = await UserModel.findById(req.data1.id)
+        const image_id = user.image.public_id
+        // console.log(image_id)
+        await cloudinary.uploader.destroy(image_id)
+        const mycloud = await cloudinary.uploader.upload(file.tempFilePath, {
+          folder: 'profileimageapi',
+          width: 150,
+          crop: 'scale',
+        })
+
+        var data = {
+          name: req.body.name,
+          email: req.body.email,
+
+          image: {
+            public_id: mycloud.public_id,
+            url: mycloud.secure_url,
+          },
+        }
+      } else {
+        var data = {
+          name: req.body.name,
+          email: req.body.email,
+        }
+      }
+
+      // update code
+      const result = await UserModel.findByIdAndUpdate(req.params.id, data)
+
+      res.status(200).json({
+        success: true,
+        message: 'profile update successfully',
+        result,
+      })
+    } catch (error) {
+      console.log(err)
+    }
+  }
+  static updatepassword = async (req, res) => {
+    try {
+        // const { id } = req.data1
+        const { old_password, new_password, confirmpassword } = req.body;
+        if (old_password && new_password && confirmpassword) {
+            const user = await UserModel.findById(req.data1.id);
+            const ismatch = await bcrypt.compare(old_password, user.password);
+            if (!ismatch) {
+                res
+                    .status(401)
+                    .json({ status: "failed", message: "old password is incorrect" });
+            } else {
+                if (new_password !== confirmpassword) {
+                    res
+                        .status(401)
+                        .json({ status: "failed", message: "  Password and confirm password do not match" });
+
+                } else {
+                    const newHashpassword = await bcrypt.hash(new_password, 10);
+                    await UserModel.findByIdAndUpdate(req.data1.id, {
+                        $set: { password: newHashpassword },
+                    });
+                    res.status(201).json({
+                        status: 'success',
+                        message: 'PASSWORD UPDATED SUCCESSFULLY 😃',
+
+                    })
+
+                }
+            }
+        } else {
+            return res.status(400).json({
+                status: 'failed',
+                message: 'All fiels required',
+            })
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
   static logout = async (req, res) => {
     try {
       res.cookie('token', null, {
