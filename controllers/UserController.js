@@ -1,8 +1,7 @@
 const UserModel = require("../models/User");
 const bcrypt = require("bcrypt");
 const cloudinary = require("cloudinary").v2;
-const jwt = require('jsonwebtoken')
-
+const jwt = require("jsonwebtoken");
 
 cloudinary.config({
   cloud_name: "ddc3epubs",
@@ -90,55 +89,61 @@ class UserController {
   static verifylogin = async (req, res) => {
     console.log(req.body);
     try {
-        const { email, password } = req.body;
-        if (email && password) {
-            const user = await UserModel.findOne({ email: email })
+      const { email, password } = req.body;
+      if (email && password) {
+        const user = await UserModel.findOne({ email: email });
 
-            if (user != null) {
-                const isMatched = await bcrypt.compare(password, user.password)
-                if (isMatched) {
-                    const token = jwt.sign({ ID: user._id }, 'nitin123456uprety');
-                    // console.log(token)
-                    res.cookie('token', token)
-                    res.status(201).json({
-                        status: 'success',
-                        message: 'successful',
-                        token: token,
-                        user,
-                    })
-                } else {
-                    res
-                        .status(401)
-                        .json({ status: "failed", message: "email or password is not valid" });
-                }
-            } else {
-                res
-                    .status(401)
-                    .json({ status: "failed", message: "you are not register user" });
-            }
-        } else {
+        if (user != null) {
+          const isMatched = await bcrypt.compare(password, user.password);
+          if (isMatched) {
+            const token = jwt.sign({ ID: user._id }, "nitin123456uprety");
+            // console.log(token)
+            res.cookie("token", token);
+            res.status(201).json({
+              status: "success",
+              message: "successful",
+              token: token,
+              user,
+            });
+          } else {
             res
-                .status(401)
-                .json({ status: "failed", message: "all field required" });
+              .status(401)
+              .json({
+                status: "failed",
+                message: "email or password is not valid",
+              });
+          }
+        } else {
+          res
+            .status(401)
+            .json({ status: "failed", message: "you are not register user" });
         }
+      } else {
+        res
+          .status(401)
+          .json({ status: "failed", message: "all field required" });
+      }
     } catch (err) {
-        console.log(err);
+      console.log(err);
     }
-  }
+  };
   static updateprofile = async (req, res) => {
     try {
       // console.log(req.files.image);
-      const {name, email ,id} = req.data1
+      const { name, email, id } = req.data1;
       if (req.files) {
-        const user = await UserModel.findById(req.data1.id)
-        const imageid = user.image.public_id
+        const user = await UserModel.findById(req.data1.id);
+        const imageid = user.image.public_id;
         // console.log(imageid)
-        await cloudinary.uploader.destroy(imageid)
-        const file = req.files.image
+        await cloudinary.uploader.destroy(imageid);
+        const file = req.files.image;
         // image upload code
-        const image_upload = await cloudinary.uploader.upload(file.tempFilePath, {
-          folder: 'profile Image',
-        })
+        const image_upload = await cloudinary.uploader.upload(
+          file.tempFilePath,
+          {
+            folder: "profile Image",
+          }
+        );
 
         var data = {
           name: req.body.name,
@@ -149,8 +154,8 @@ class UserController {
           image: {
             public_id: image_upload.public_id,
             url: image_upload.secure_url,
-          }
-        }
+          },
+        };
       } else {
         var data = {
           name: req.body.name,
@@ -158,75 +163,81 @@ class UserController {
           phone: req.body.phone,
           city: req.body.city,
           adress: req.body.address,
-        }
+        };
       }
 
       // update code
-      const result = await UserModel.findByIdAndUpdate(req.params.id, data)
+      const result = await UserModel.findByIdAndUpdate(req.params.id, data);
 
       res.status(200).json({
         success: true,
-        message: 'profile update successfully',
+        message: "profile update successfully",
         result,
-      })
+      });
     } catch (error) {
-      console.log(err)
+      console.log(err);
     }
-  }
-  
+  };
   static updatepassword = async (req, res) => {
     try {
-        // console.log(req.body)
-        const { name, email, id } = req.data1
-        const { oldpassword, newpassword, cpassword } = req.body
-        if (oldpassword && newpassword && cpassword) {
-            const user = await StudentModel.findById(req.data1.id)
-            // console.log(user)
+      // console.log(req.body)
+      // const { name, email, id } = req.data1
+      const { oldpassword, newpassword, cpassword } = req.body;
+      if (oldpassword && newpassword && cpassword) {
+        const user = await UserModel.findById(req.data1.id);
+        // console.log(user)
 
-            // for password compareing
-            const ismatched = await bcrypt.compare(oldpassword, user.password)
-            if (!ismatched) {
-                req.flash('error', 'Old Password is Incorrect')
-                res.redirect('/changepassword')
-            } else {
-                if (newpassword != cpassword) {
-                    req.flash('error', 'Newpassword and confirmpassword does not match')
-                    res.redirect('/changepassword')
-                } else {
-                    const newhashpassword = await bcrypt.hash(newpassword, 10)
-                    const r = await StudentModel.findByIdAndUpdate(req.data1.id, {
-                        password: newhashpassword,
-                    })
-                    req.flash('success', 'Password update sucessfully')
-                    res.redirect('/changepassword')
-                }
-
-            }
-
+        // for password compareing
+        const ismatched = await bcrypt.compare(oldpassword, user.password);
+        if (!ismatched) {
+          res
+            .status(401)
+            .json({ status: "failed", message: "old password is incorrect" });
         } else {
-            req.flash('error', 'All Field Are Required')
-            res.redirect('/changepassword')
+          if (newpassword != cpassword) {
+            res
+              .status(401)
+              .json({
+                status: "failed",
+                message: "  Password and confirm password do not match",
+              });
+          } else {
+            const newhashpassword = await bcrypt.hash(newpassword, 10);
+            await UserModel.findByIdAndUpdate(req.data1.id, {
+              password: newhashpassword,
+            });
+            res.status(201).json({
+              status: 'success',
+              message: 'PASSWORD UPDATED SUCCESSFULLY 😃',
+
+          })
+          }
         }
-
-    } catch (error) {
-        console.log(error)
-    }
-}
-  static logout = async (req, res) => {
-    try {
-      res.cookie('token', null, {
-        expires: new Date(Date.now()),
-        httpOnly: true,
+      } else {
+        return res.status(400).json({
+          status: 'failed',
+          message: 'All fiels required',
       })
-
-      res.status(200).json({
-        success: true,
-        message: 'Logged Out',
-      })
+      }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+  static logout = async (req, res) => {
+    try {
+      res.cookie("token", null, {
+        expires: new Date(Date.now()),
+        httpOnly: true,
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Logged Out",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }
 
 module.exports = UserController;
