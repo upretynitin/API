@@ -176,44 +176,38 @@ class UserController {
   
   static updatepassword = async (req, res) => {
     try {
-        // consolo.log(req.body)
+        // console.log(req.body)
         const { name, email, id } = req.data1
-        const { oldpassword, newpassword, cpassword } = req.body;
+        const { oldpassword, newpassword, cpassword } = req.body
         if (oldpassword && newpassword && cpassword) {
-            const user = await UserModel.findById(req.data1.id);
+            const user = await StudentModel.findById(id)
             // console.log(user)
 
             // for password compareing
-            const ismatched = await bcrypt.compare(oldpassword, user.password);
+            const ismatched = await bcrypt.compare(oldpassword, user.password)
             if (!ismatched) {
-                res
-                    .status(401)
-                    .json({ status: "failed", message: "old password is incorrect" });
+                req.flash('error', 'Old Password is Incorrect')
+                res.redirect('/changepassword')
             } else {
                 if (newpassword != cpassword) {
-                    res
-                        .status(401)
-                        .json({ status: "failed", message: "  Password and confirm password do not match" });
-
+                    req.flash('error', 'Newpassword and confirmpassword does not match')
+                    res.redirect('/changepassword')
                 } else {
-                    const newHashpassword = await bcrypt.hash(newpassword, 10);
-                    const r = await UserModel.findByIdAndUpdate(req.data1.id, {
-                        $set: { password: newHashpassword },
-                    });
-                    res.status(201).json({
-                        status: 'success',
-                        message: 'PASSWORD UPDATED SUCCESSFULLY 😃',
-
+                    const newhashpassword = await bcrypt.hash(newpassword, 10)
+                    const r = await StudentModel.findByIdAndUpdate(id, {
+                        password: newhashpassword,
                     })
-
+                    req.flash('success', 'Password update sucessfully')
+                    res.redirect('/changepassword')
                 }
+
             }
+
         } else {
-            return res.status(400).json({
-                status: 'failed',
-                message: 'All fiels required',
-            })
+            req.flash('error', 'All Field Are Required')
+            res.redirect('/changepassword')
         }
+
     } catch (error) {
         console.log(error)
     }
