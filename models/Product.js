@@ -54,7 +54,7 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
 
-    images: {
+    image: {
       public_id: {
           type: String,
           // required: true
