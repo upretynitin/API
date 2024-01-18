@@ -23,7 +23,7 @@ connectdb()
 
 //load route
 app.use('/api',web)
-//localhost:5000/api
+//localhost:4000/api
 
 
 
