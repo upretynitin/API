@@ -3,6 +3,8 @@ const UserController = require('../controllers/UserController')
 const CategoryController = require('../controllers/CategoryController')
 const ProductController = require('../controllers/ProductController')
 const checkauth = require('../middleware/auth')
+// const paymentController = require('../controllers/PaymentController')
+const PaymentController = require('../controllers/PaymentController')
 const router = express.Router()
 
 //usercontroller
@@ -28,6 +30,9 @@ router.get('/getallproductdetail/:id',ProductController.getallproductdetail)
 router.post('/updateproduct/:id',ProductController.updateproduct)
 router.get('/deleteproduct',ProductController.deleteproduct)
 
+// payment controller
+router.post('/payment/process', checkauth, PaymentController.processPayment)
+router.get('/stripeapiKey', checkauth, PaymentController.sendStripeApiKey)
 
 
 module.exports = router
