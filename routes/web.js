@@ -5,6 +5,7 @@ const ProductController = require('../controllers/ProductController')
 const checkauth = require('../middleware/auth')
 // const paymentController = require('../controllers/PaymentController')
 const PaymentController = require('../controllers/PaymentController')
+const OrderController = require('../controllers/OrderController')
 const router = express.Router()
 
 //usercontroller
@@ -32,7 +33,13 @@ router.get('/deleteproduct',ProductController.deleteproduct)
 
 // payment controller
 router.post('/payment/process', checkauth, PaymentController.processPayment)
-router.get('/stripeapiKey', checkauth, PaymentController.sendStripeApiKey)
+router.get('/stripeapiKey', PaymentController.sendStripeApiKey)
 
+// order controller
+router.post('/order/create',OrderController.creteorder)
+router.post('/order/getsingleorder/:id',OrderController.getsingleorder)
+router.get('/order/myorder',OrderController.myorder)
+router.get('/order/getallorders',OrderController.getallorders)
+router.get('/order/deleteorder/:id',OrderController.deleteorder)
 
 module.exports = router
