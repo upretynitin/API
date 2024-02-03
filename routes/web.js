@@ -36,10 +36,10 @@ router.post('/payment/process', checkauth, PaymentController.processPayment)
 router.get('/stripeapiKey', PaymentController.sendStripeApiKey)
 
 // order controller
-router.post('/order/create',OrderController.creteorder)
-router.post('/order/getsingleorder/:id',OrderController.getsingleorder)
-router.get('/order/myorder',OrderController.myorder)
-router.get('/order/getallorders',OrderController.getallorders)
-router.get('/order/deleteorder/:id',OrderController.deleteorder)
+router.post('/order/create', checkauth , OrderController.creteorder)
+router.post('/order/getsingleorder/:id', checkauth ,OrderController.getsingleorder)
+router.get('/order/myorder', checkauth ,OrderController.myorder)
+router.get('/order/getallorders', checkauth ,OrderController.getallorders)
+router.get('/order/deleteorder/:id',checkauth ,OrderController.deleteorder)
 
 module.exports = router

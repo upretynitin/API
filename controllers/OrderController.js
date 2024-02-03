@@ -3,6 +3,7 @@ const OrderModel = require("../models/Order");
 class OrderController {
     static creteorder = async(req,res)=>{
         try {
+            console.log(req.body);
             const {shippingInfo,orderItems,paymentInfo,itemsPrice,taxPrice,shippingPrice,totalPrice} =req.body
             const order = await OrderModel.create({
                 shippingInfo,
