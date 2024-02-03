@@ -14,7 +14,7 @@ class OrderController {
                 shippingPrice,
                 totalPrice,
                 paidAt:Date.now(),
-                user:req.user._id
+                user:req.data1._id
 
             })
             res
